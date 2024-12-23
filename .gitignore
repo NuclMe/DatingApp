@@ -1,1 +1,5 @@
+# API build outputs
 API/bin/
+API/obj/
+API/bin/Debug/
+API/obj/Debug/
