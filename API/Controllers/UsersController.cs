@@ -14,9 +14,11 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
-        var users = await userRepository.GetMembersAsync();
+        userParams.CurrentUsername = User.GetUsername();
+        var users = await userRepository.GetMembersAsync(userParams);
+        Response.AddPaginationHeader(users);
 
         return Ok(users);
     }
@@ -63,6 +65,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
         };
 
         if (user.Photos.Count == 0) photo.IsMain = true;
+
         user.Photos.Add(photo);
 
         if (await userRepository.SaveAllAsync())
